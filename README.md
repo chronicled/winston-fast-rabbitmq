@@ -33,7 +33,7 @@ Setup the transport in winston:
         },
         // winston options
     }
-	winston.add(winston.transports.WinstonFastRabbitMq(options));
+	winston.add(new winstonFastRabbitMq(options));
 ```
 
 Now you are ready to send some logs to RabbitMq!
