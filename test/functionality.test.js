@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const chai = require('chai');
 const assert = chai.assert;
@@ -10,65 +10,79 @@ const winston = require('winston');
 const winstonFastRabbitMq = require('../lib/winston-fast-rabbitmq.js');
 
 describe('Winston connection', () => {
-	describe('Test if log is send to RabbitMQ', function() {
-		this.timeout(30000);
-		
-		const transportOptions = { 
-				protocol: 'amqp',
-				username: 'guest',
-				password: 'guest',
-				host: 'localhost',
-				port: 5672,
-				silent: true,
-				exchangeName: 'TEST',
-				exchangeType: 'topic',
-				durable: false
-			}
+  describe('Test if log is send to RabbitMQ', function() {
+    this.timeout(30000);
 
-		winston.add(winstonFastRabbitMq, transportOptions);
-		winston.remove(winston.transports.Console);
+    const transportOptions = {
+      amqp: {
+        protocol: 'amqp',
+        username: 'guest',
+        password: 'guest',
+        host: 'localhost',
+        port: 5672,
+        silent: true,
+        exchangeName: 'TEST',
+        exchangeType: 'topic',
+        durable: false
+      }
+    }
 
-		it('should return the correct messages from queue',  (done) => {
-			transportOptions.level = 'error';
-			
-			let connection; 
-			let connectionCloseTimerId;
-			let msgCount = 0;
+    const logger = winston.createLogger({
+      level: 'info',
+      defaultMeta: { service: 'user-service' }
+    });
 
-			setTimeout(() => { winston.error("TESTERROR"); }, 50);
+    logger.add(new winston.transports.WinstonFastRabbitMq(transportOptions));
 
-			return amqplib
-				 .connect(transportOptions.protocol + '://' + transportOptions.host)
-				.then((conn) => { connection = conn; return conn.createChannel(); })
-				.then((channel) => {
-					return channel.assertExchange(transportOptions.exchangeName, transportOptions.exchangeType, {durable: transportOptions.durable})
-						.then((ok) => {
-							return channel.assertQueue('', {exclusive: true})
-					    				.then((q) => {
-					    					channel.bindQueue(q.queue, transportOptions.exchangeName, '');
+    it('should return the correct messages from queue',  (done) => {
+      transportOptions.level = 'error';
 
-					    					return channel.consume(q.queue, (msg) => {
-					    						
-					    						msgCount++;
 
-					    						clearTimeout(connectionCloseTimerId);
+      let connection;
+      let connectionCloseTimerId;
+      let msgCount = 0;
 
-										        connectionCloseTimerId = setTimeout(() => { 
-										        	const jsonMessage = JSON.parse(msg.content.toString());
-										        	expect(jsonMessage.message).to.equal('TESTERROR');
-										        	expect(msgCount).to.equal(1);
-										        	
-										        	connection.close(); 
+      setTimeout(() => {
+        logger.error('TESTERROR');
+      }, 500);
 
-										        	done();
-										        }, 500);
+      amqplib.connect(transportOptions.amqp.protocol + '://' + transportOptions.amqp.host)
+      .then((conn) => { connection = conn; return conn.createChannel(); })
+      .then((channel) => {
 
-										    }, {noAck: true});
-					    				})
+        return channel.assertExchange(transportOptions.amqp.exchangeName, transportOptions.amqp.exchangeType, {durable: transportOptions.amqp.durable})
+        .then((ok) => {
 
-					  	});
-				})
-				.catch((ex) => { throw ex; });
-		});
-	});
+          return channel.assertQueue('', {exclusive: true})
+          .then((q) => {
+
+            return channel.bindQueue(q.queue, transportOptions.amqp.exchangeName, '')
+            .then((queue) => {
+
+              return channel.consume(q.queue, (msg) => {
+                msgCount++;
+
+                clearTimeout(connectionCloseTimerId);
+
+                  connectionCloseTimerId = setTimeout(() => {
+                    const jsonMessage = JSON.parse(msg.content.toString());
+                    expect(jsonMessage.message).to.equal('TESTERROR');
+                    expect(msgCount).to.equal(1);
+
+                    connection.close();
+
+                    done();
+                  }, 500);
+
+              }, {noAck: true})
+              .then(()=>{
+                console.log('waiting for message')
+              });
+            });
+          });
+        });
+      })
+      .catch((ex) => { throw ex; });
+    });
+  });
 });

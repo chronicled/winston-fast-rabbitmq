@@ -1,6 +1,8 @@
 # winston-fast-rabbitmq
 
-A RabbitMQ transport for Winston. 
+A RabbitMQ transport for Winston 3.0.
+
+Forked from [https://github.com/TBear79/winston-fast-rabbitmq](https://github.com/TBear79/winston-fast-rabbitmq)
 
 It closes the connection after every message, but keeps the connection open as long as new messages arrive within a short timespan.
 
@@ -25,7 +27,13 @@ Then use `require()` to load it in your code:
 Setup the transport in winston:
 
 ```javascript
-	winston.add(winstonFastRabbitMq, options);
+    var options = {
+        amqp {
+            // rabbit-chatter options
+        },
+        // winston options
+    }
+	winston.add(winston.transports.WinstonFastRabbitMq(options));
 ```
 
 Now you are ready to send some logs to RabbitMq!

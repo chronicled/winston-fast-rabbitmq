@@ -1,15 +1,15 @@
 {
   "name": "winston-fast-rabbitmq",
-  "version": "2.2.0",
-  "description": "A RabbitMQ transport for Winston.",
+  "version": "3.0.0",
+  "description": "A RabbitMQ transport for Winston 3.0.",
   "main": "lib/winston-fast-rabbitmq.js",
-  "types": "typings/winston-fast-rabbitmq.d.ts",
+  "types": null,
   "scripts": {
     "test": "mocha"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/TBear79/winston-fast-rabbitmq"
+    "url": "https://github.com/chronicled/winston-fast-rabbitmq"
   },
   "keywords": [
     "winston",
@@ -23,20 +23,21 @@
     "error handling",
     "errorhandler"
   ],
-  "author": "Thorbjørn Jelgren",
+  "author": "Arunram Kalaiselvan",
   "license": "MIT",
   "dependencies": {
-    "amqplib": "^0.5.1",
+    "amqplib": "^0.5.5",
     "rabbit-chatter": "^2.0.0",
-    "util": "^0.10.3",
-    "winston": "^2.3.1"
+    "util": "^0.12.1",
+    "winston": "^3.2.1",
+    "winston-transport": "^4.3.0"
   },
   "devDependencies": {
-    "@types/winston": "^2.3.3",
-    "chai": "^4.1.0",
-    "mocha": "^3.4.2",
-    "sinon": "^2.3.8",
-    "tslint": "^5.5.0",
-    "typescript": "^2.4.1"
+    "@types/winston": "^2.4.4",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0",
+    "sinon": "^7.4.2",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.3"
   }
 }
