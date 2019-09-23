@@ -32,7 +32,7 @@ describe('Winston connection', () => {
       defaultMeta: { service: 'user-service' }
     });
 
-    logger.add(new winston.transports.WinstonFastRabbitMq(transportOptions));
+    logger.add(new winstonFastRabbitMq(transportOptions));
 
     it('should return the correct messages from queue',  (done) => {
       transportOptions.level = 'error';
