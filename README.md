@@ -28,7 +28,7 @@ Setup the transport in winston:
 
 ```javascript
     var options = {
-        amqp {
+        amqp: {
             // rabbit-chatter options
         },
         // winston options
