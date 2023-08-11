@@ -1,5 +1,5 @@
 {
-  "name": "@chronicled/winston-fast-rabbitmq",
+  "name": "@nabp_mediledger/winston-fast-rabbitmq",
   "version": "3.0.0-alpha.1",
   "description": "A RabbitMQ transport for Winston 3.0.",
   "main": "lib/winston-fast-rabbitmq.js",
